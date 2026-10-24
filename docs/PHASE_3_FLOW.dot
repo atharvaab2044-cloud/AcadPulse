@@ -1,0 +1,39 @@
+digraph AcadPulseStudentFlow {
+  graph [rankdir=TB, bgcolor="#F7F9FC", pad="0.25", nodesep="0.36", ranksep="0.42", splines=polyline, fontname="Arial", label="ACADPULSE · STUDENT IDENTITY & TERM ENROLLMENT", labelloc=t, labeljust=l, fontsize=18, fontcolor="#172B4D"];
+  node [shape=box, style="rounded,filled", fontname="Arial", fontsize=10, margin="0.16,0.10", color="#D8E1EF", penwidth=1.0, fontcolor="#263A56", fillcolor="#FFFFFF"];
+  edge [fontname="Arial", fontsize=9, color="#7185A5", fontcolor="#596C89", arrowsize=0.75, penwidth=1.15];
+
+  signin [label="Admin signs in", fillcolor="#EAF0FF", color="#B9C9F0"];
+  directory [label="Student directory\nSearch / open profile"];
+  profile [label="Create student profile\nStable student_id + student code", fillcolor="#E5F7F0", color="#A8DCCA"];
+  prn [label="Add PRN when issued\nSaved as PENDING"];
+  verify [label="Admin verifies PRN\nVerifier + timestamp audited", fillcolor="#E5F7F0", color="#A8DCCA"];
+  program [label="Create / select\nacademic programme", fillcolor="#EAF0FF", color="#B9C9F0"];
+  enrol [label="Create semester enrollment\nYear, semester, roll, division, batch"];
+  validate [shape=diamond, label="Valid term, programme,\nidentity & curriculum?", fillcolor="#FFF4DE", color="#EACB83", margin="0.13,0.07"];
+  entry [shape=diamond, label="First enrollment?", fillcolor="#FFF4DE", color="#EACB83", margin="0.13,0.07"];
+  regular [label="Regular first-year\nstarts at Semester 1"];
+  dse [label="DSE first college record\nstarts at Semester 3\nactual admission year ≠ cohort year"];
+  commit [label="Commit enrollment + audit event\nNever overwrite prior term", fillcolor="#E5F7F0", color="#A8DCCA"];
+  history [label="Student profile history\nall terms retain own identifiers", fillcolor="#EAF0FF", color="#B9C9F0"];
+  error [label="Show validation error\nkeep existing records unchanged", fillcolor="#FDEBEC", color="#F0BFC2"];
+  future [label="Later: approved curriculum\nthen marks / attendance / results", style="rounded,dashed,filled", fillcolor="#F2F4F8", color="#C9D1DE", fontcolor="#69788E"];
+
+  signin -> directory -> profile;
+  profile -> prn [label="PRN unavailable now / later"];
+  prn -> verify;
+  profile -> program;
+  directory -> program [style=dashed, label="No programme exists"];
+  program -> enrol;
+  profile -> enrol [label="Open profile"];
+  enrol -> validate;
+  validate -> error [label="No"];
+  validate -> entry [label="Yes"];
+  entry -> regular [label="Regular"];
+  entry -> dse [label="DSE"];
+  regular -> commit;
+  dse -> commit;
+  entry -> commit [label="Existing student / next term", constraint=false];
+  commit -> history -> future;
+  verify -> history [label="Verified identifier"];
+}

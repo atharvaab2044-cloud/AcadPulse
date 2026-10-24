@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block auth_content %}
+<div class="login-page">
+  <section class="login-visual">
+    <a class="brand brand-login" href="{{ url_for('auth.login') }}"><span class="brand-mark"><span></span><span></span><span></span><span></span></span><span class="brand-copy"><strong>AcadPulse</strong><small>ECE Academic Records</small></span></a>
+    <div class="login-visual-main"><div class="eyebrow eyebrow-light"><span></span>ACADEMIC OPERATIONS PLATFORM</div><h1>Every record.<br><em>One clear picture.</em></h1><p>Bring student histories, curriculum, assessments and university results together—with the review and traceability academic records deserve.</p><div class="login-feature-grid"><div><i class="bi bi-person-vcard"></i><span>Connected student history</span></div><div><i class="bi bi-journal-check"></i><span>Versioned curriculum</span></div><div><i class="bi bi-file-earmark-check"></i><span>Verified results</span></div><div><i class="bi bi-graph-up-arrow"></i><span>Transparent analytics</span></div></div></div>
+    <div class="login-visual-footer"><span>BUILT FOR ACADEMIC CLARITY</span><span>01 / 04</span></div>
+    <div class="login-decoration decor-one"></div><div class="login-decoration decor-two"></div>
+  </section>
+  <section class="login-panel"><div class="login-form-wrap"><span class="mobile-brand"><span class="brand-mark"><span></span><span></span><span></span><span></span></span>AcadPulse</span><div class="login-heading"><span class="eyebrow">WELCOME BACK</span><h2>Sign in to your workspace</h2><p>Use your authorized academic account to continue.</p></div>
+    {% if error %}<div class="form-error"><i class="bi bi-exclamation-circle"></i>{{ error }}</div>{% endif %}
+    <form method="post" class="login-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label for="email">Work email</label><div class="input-wrap"><i class="bi bi-envelope"></i><input id="email" name="email" type="email" autocomplete="username" placeholder="name@college.edu" required value="{{ request.form.get('email','') }}"></div><div class="form-label-row"><label for="password">Password</label><span>Protected account</span></div><div class="input-wrap"><i class="bi bi-lock"></i><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required></div><label class="remember-row"><input type="checkbox" name="remember"><span>Keep me signed in</span></label><button type="submit" class="button button-primary button-full">Sign in <i class="bi bi-arrow-right"></i></button></form>
+    <div class="login-assist"><i class="bi bi-shield-lock"></i><span>Access is limited by your assigned role. Contact your system administrator if you need an account.</span></div><div class="login-copyright">© {{ now_year }} AcadPulse <span>·</span> Academic Records</div>
+  </div></section>
+</div>
+{% endblock %}

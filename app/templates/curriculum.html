@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-heading heading-row">
+  <div><div class="eyebrow"><span class="eyebrow-line"></span>ACADEMIC STRUCTURE</div><h1>Academic setup</h1><p>Turn a syllabus PDF into a reviewed, versioned curriculum. Uploaded content never activates by itself.</p></div>
+  <div class="heading-actions"><a class="button button-secondary" href="{{ url_for('academics.programs') }}"><i class="bi bi-mortarboard"></i> Programme registry</a></div>
+</section>
+<div class="context-strip"><div class="context-icon"><i class="bi bi-journal-check"></i></div><div><strong>Upload → Draft → Review → Approve → Activate</strong><span>Source evidence is retained. Extracted fields remain suggestions until an administrator verifies them.</span></div><span class="context-badge"><i class="bi bi-lock"></i> Versioned</span></div>
+
+<section class="panel upload-panel">
+  <div class="panel-heading"><div><h2><i class="bi bi-file-earmark-arrow-up panel-heading-icon"></i> Create curriculum draft from syllabus</h2><p>PDF text is parsed for candidate subject rows. Scanned PDFs can be recorded for manual review.</p></div><span class="panel-subtle-tag"><i class="bi bi-filetype-pdf"></i> PDF only · max {{ (config.MAX_CONTENT_LENGTH // (1024 * 1024)) }} MB</span></div>
+  {% if programs %}
+  <form class="entity-form" action="{{ url_for('curricula.upload') }}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+      <div class="form-field form-field-wide"><label for="syllabus_pdf">Syllabus PDF <span class="required-mark">*</span></label><input id="syllabus_pdf" type="file" name="syllabus_pdf" accept="application/pdf,.pdf" required><small>Upload the official syllabus/scheme document. Password-protected files are not accepted. A duplicate PDF in the same programme, scheme and cohort is detected.</small></div>
+      <div class="form-field"><label for="program_id">Programme <span class="required-mark">*</span></label><select id="program_id" name="program_id" required><option value="">Select programme</option>{% for program in programs %}<option value="{{ program.id }}">{{ program.code }} · {{ program.name }}</option>{% endfor %}</select></div>
+      <div class="form-field"><label for="effective_cohort_year">Curriculum cohort year <span class="required-mark">*</span></label><input id="effective_cohort_year" name="effective_cohort_year" type="number" min="1990" max="2200" value="{{ current_year }}" required><small>This is the cohort the version applies to. It is not the student's actual DSE admission year.</small></div>
+      <div class="form-field"><label for="scheme_id">Registered scheme</label><select id="scheme_id" name="scheme_id"><option value="">Create/reuse scheme code below</option>{% for scheme in schemes %}<option value="{{ scheme.id }}">{{ scheme.code }} · {{ scheme.display_name }}</option>{% endfor %}</select><small>Choose one scheme if already registered. Otherwise, use the scheme code and name below.</small></div>
+      <div class="form-field"><label for="version_code">Version code (optional)</label><input id="version_code" name="version_code" maxlength="64" placeholder="Auto-generated if blank"><small>Must be unique. Example: ECE_NEP_MIS_2026_R2.</small></div>
+      <div class="form-field"><label for="new_scheme_code">New/reused scheme code</label><input id="new_scheme_code" name="new_scheme_code" maxlength="40" value="NEP_MIS"><small>NEP/MIS should use the single code <code>NEP_MIS</code>, as agreed for this project.</small></div>
+      <div class="form-field"><label for="new_scheme_name">Scheme display name</label><input id="new_scheme_name" name="new_scheme_name" maxlength="100" value="NEP/MIS"></div>
+      <div class="form-field form-field-wide"><label for="compare_version_id">Compare to previous version (optional)</label><select id="compare_version_id" name="compare_version_id"><option value="">Don't compare yet</option>{% for version, count in versions %}<option value="{{ version.id }}">{{ version.version_code }} · {{ version.program.code }} · {{ version.scheme.code }} · cohort {{ version.effective_cohort_year }} ({{ version.status }})</option>{% endfor %}</select><small>The comparison must be within the same programme and scheme. Added, changed, removed and unchanged subjects will be summarized after extraction.</small></div>
+    </div>
+    <div class="form-note"><i class="bi bi-shield-check"></i><span>Extraction is not approval. Subject code, title, semester, credits and assessment components must be checked against the source PDF. The existing active curriculum remains untouched until the new version passes each approval stage.</span></div>
+    <div class="form-actions"><button class="button button-primary" type="submit"><i class="bi bi-file-earmark-arrow-up"></i> Upload and extract draft</button></div>
+  </form>
+  {% else %}
+  <div class="empty-inline"><i class="bi bi-mortarboard"></i><span><strong>Create a programme first</strong><small>A curriculum version must belong to a programme.</small><a class="button button-primary" href="{{ url_for('academics.new_program') }}">Add programme</a></span></div>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <div class="panel-heading"><div><h2>Curriculum versions</h2><p>{{ versions|length }} version{{ '' if versions|length == 1 else 's' }} recorded</p></div><span class="panel-subtle-tag"><i class="bi bi-journal-bookmark"></i> Version registry</span></div>
+  {% if versions %}
+  <div class="table-wrap"><table class="data-table"><thead><tr><th>VERSION</th><th>SCHEME</th><th>PROGRAMME</th><th>COHORT</th><th>SUBJECTS</th><th>STATUS</th><th>APPROVAL</th><th></th></tr></thead><tbody>
+  {% for version, count in versions %}<tr><td><div class="version-cell"><span class="version-icon"><i class="bi bi-journal-text"></i></span><span><strong>{{ version.version_code }}</strong><small>{{ version.source_filename or 'No source PDF recorded' }}</small></span></div></td><td>{{ version.scheme.display_name }}</td><td>{{ version.program.name }}</td><td>{{ version.effective_cohort_year }}</td><td><span class="count-chip">{{ count }}</span></td><td><span class="status-pill status-{{ version.status }}">{{ version.status|replace('_',' ')|title }}</span></td><td>{% if version.approved_at %}<span class="muted-text">{{ version.approved_at.strftime('%d %b %Y') }}</span>{% else %}<span class="muted-text">Not approved</span>{% endif %}</td><td><a class="button button-secondary button-small" href="{{ url_for('curricula.detail', version_id=version.id) }}">Review <i class="bi bi-arrow-right"></i></a></td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<div class="empty-table"><div class="empty-chart-icon"><i class="bi bi-journal-bookmark"></i></div><strong>No curriculum versions yet</strong><p>Upload a syllabus above. AcadPulse will create a draft, never change the live curriculum immediately.</p></div>{% endif %}
+</section>
+<section class="three-info-grid"><article class="info-card"><span class="info-card-icon icon-blue"><i class="bi bi-file-earmark-pdf"></i></span><h3>Extract</h3><p>Collect candidate subject codes, titles, semester numbers, credits and page evidence from selectable PDF text.</p></article><article class="info-card"><span class="info-card-icon icon-amber"><i class="bi bi-pencil-square"></i></span><h3>Review</h3><p>Correct the extracted values, configure assessment components, and compare versions before submission.</p></article><article class="info-card"><span class="info-card-icon icon-teal"><i class="bi bi-shield-check"></i></span><h3>Activate</h3><p>Only an approved version can be activated. Previous active versions are retired, not deleted or overwritten.</p></article></section>
+{% endblock %}

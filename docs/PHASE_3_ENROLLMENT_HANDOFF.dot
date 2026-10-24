@@ -1,0 +1,20 @@
+digraph AcadPulseEnrollment {
+  graph [rankdir=TB, bgcolor="#F5F7FB", pad="0.25", nodesep="0.35", ranksep="0.45", fontname="Arial", label="AcadPulse · Student Profile to Academic Enrollment", labelloc=t, fontsize=18, fontcolor="#183153"];
+  node [shape=box, style="rounded,filled", color="#D8E1F0", fillcolor="#FFFFFF", fontname="Arial", fontsize=10, fontcolor="#263B5B", margin="0.18,0.12"];
+  edge [color="#7892C8", penwidth=1.5, arrowsize=0.7, fontname="Arial", fontsize=9, fontcolor="#52627A"];
+  A [label="Create permanent student profile", fillcolor="#EAF0FF", color="#B9CAFA"];
+  B [label="Student code generated\nPRN optional / verify later"];
+  C [label="Open student profile\nJump to enrollment section"];
+  D [label="Select programme and curriculum\nif an approved version is available"];
+  E [label="Select admission type, academic year,\nactual admission year and semester"];
+  F [label="Enter term-specific roll number,\ndivision, batch and enrollment date"];
+  G [shape=diamond, label="Valid and unique?", fillcolor="#FFF7E8", color="#F0D29C"];
+  H [label="Show field errors\nPreserve submitted values", fillcolor="#FFF0EE", color="#F3C5BF"];
+  I [label="Save enrollment and audit event", fillcolor="#E8F7F0", color="#B4E3CE"];
+  J [label="Show term history\nDo not infer promotion", fillcolor="#EAF0FF", color="#B9CAFA"];
+  A -> B -> C -> D -> E -> F -> G;
+  G -> H [label="No"];
+  H -> D [label="Correct and retry", style=dashed];
+  G -> I [label="Yes"];
+  I -> J;
+}

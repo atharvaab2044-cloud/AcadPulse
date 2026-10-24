@@ -1,0 +1,18 @@
+digraph AcadPulseRoadmap {
+  graph [rankdir=TB, bgcolor="#ffffff", pad="0.28", nodesep="0.25", ranksep="0.34", splines=ortho, fontname="DejaVu Sans", label="ACADPULSE  |  BUILD ROADMAP", labelloc=t, fontsize=22, fontcolor="#183153"];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=10, margin="0.16,0.10", color="#d3dae5", fillcolor="#f6f8fb", fontcolor="#24364b", penwidth=1.1, width=5.6];
+  edge [color="#8a9aaf", penwidth=1.35, arrowsize=0.75];
+  p0 [label="PHASE 0  ·  Reference, requirements & formula parity\nLegacy calculations captured; constraints and tests documented", fillcolor="#e8f5ee", color="#37845d", fontcolor="#16482f"];
+  p1 [label="PHASE 1  ·  Clean app foundation & familiar UI\nFlask shell · authentication · core schema · workspace pages", fillcolor="#e7efff", color="#356ac3", fontcolor="#163b73", penwidth=2.0];
+  p2 [label="PHASE 2  ·  Academic setup & syllabus extractor\nDraft extraction · review · curriculum diff · approval/versioning"];
+  p3 [label="PHASE 3  ·  Student identity & term enrollment\nStable student ID · verified PRN · DSE · historical roll/division/batch"];
+  p4 [label="PHASE 4  ·  Coursework marks & attendance\nAssessment templates · spreadsheet previews · validation · audit"];
+  p5 [label="PHASE 5  ·  Legacy calculation engine\nTheory/lab formulas · grade table · SGPA/CGPA · snapshots/policy gate"];
+  p6 [label="PHASE 6  ·  University-result PDF workflow\nParser registry/OCR · staged analysis · review · explicit attempt linking"];
+  p7 [label="PHASE 7  ·  Supplementary, backlogs & progression\nApproved rules only · no guessed ATKT/promotion threshold"];
+  p8 [label="PHASE 8  ·  Analytics, reports & exports\nDefined metrics · cohort filters · Excel/PDF outputs"];
+  p9 [label="PHASE 9  ·  Security, migration rehearsal & release\nPostgreSQL · migrations · restore test · controlled legacy data import"];
+  p0 -> p1 -> p2 -> p3 -> p4 -> p5 -> p6 -> p7 -> p8 -> p9;
+  legend [shape=plaintext, label="Green = baseline requirements captured     Blue = current starter build     Grey = next development phases", fontsize=9, fontcolor="#55677f"];
+  p9 -> legend [style=invis];
+}

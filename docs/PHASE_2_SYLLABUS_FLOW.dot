@@ -1,0 +1,34 @@
+digraph AcadPulseSyllabus {
+  graph [rankdir=TB, bgcolor="#f5f7fb", pad="0.28", nodesep="0.28", ranksep="0.35", fontname="Arial", label="ACADPULSE  |  SYLLABUS → CURRICULUM WORKFLOW", labelloc="t", fontsize=18, fontcolor="#172c4b"];
+  node [shape=box, style="rounded,filled", color="#dfe6ef", fillcolor="#ffffff", fontname="Arial", fontsize=10, fontcolor="#33465f", margin="0.14,0.09"];
+  edge [color="#8a9bb3", penwidth=1.3, arrowsize=0.7];
+  start [label="Administrator selects programme,\nscheme and cohort", fillcolor="#eaf0ff", color="#cbd9fc"];
+  upload [label="Upload syllabus PDF\nValidate type, size, encryption and pages"];
+  hash [label="Generate private storage key\nCompute SHA-256"];
+  dup [shape=diamond, label="Same file in\nsame scope?", fillcolor="#fff5e2", color="#f0dfba"];
+  existing [label="Open existing version\nNo duplicate draft", fillcolor="#fff9ee", color="#f0dfba"];
+  extract [label="Profile/selectable-text extraction\nPyMuPDF parser", fillcolor="#eaf7f2", color="#cdece1"];
+  scanned [shape=diamond, label="Extractable text\navailable?", fillcolor="#fff5e2", color="#f0dfba"];
+  manual [label="Save source as draft\nFlag scanned/low-text pages\nAdd rows manually", fillcolor="#f6f3ff", color="#e5dffc"];
+  candidates [label="Create subject suggestions\nPage evidence + confidence\nAll rows review_required", fillcolor="#eaf7f2", color="#cdece1"];
+  review [label="Human review: code, title, semester,\ncredits, type and assessment JSON", fillcolor="#eaf0ff", color="#cbd9fc"];
+  ready [shape=diamond, label="All subjects\nready?", fillcolor="#fff5e2", color="#f0dfba"];
+  fix [label="Correct / add / remove rows\nKeep version as draft", fillcolor="#fff9ee", color="#f0dfba"];
+  submit [label="Submit for review\nContent becomes read-only", fillcolor="#f6f3ff", color="#e5dffc"];
+  approve [label="Explicit approval with audit note", fillcolor="#eaf0ff", color="#cbd9fc"];
+  activate [label="Explicit activation\nRetire prior active version in same scope", fillcolor="#eaf7f2", color="#cdece1"];
+  preserve [label="Preserve PDF, prior version, subjects\nand audit events", fillcolor="#ffffff", color="#dfe6ef"];
+  start -> upload -> hash -> dup;
+  dup -> existing [label="yes"];
+  dup -> extract [label="no"];
+  extract -> scanned;
+  scanned -> manual [label="no / scanned"];
+  scanned -> candidates [label="yes"];
+  manual -> review;
+  candidates -> review;
+  review -> ready;
+  ready -> fix [label="no"];
+  fix -> review;
+  ready -> submit [label="yes"];
+  submit -> approve -> activate -> preserve;
+}

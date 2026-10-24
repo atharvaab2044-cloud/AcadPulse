@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="error-page"><span class="error-code">403</span><h1>Access denied</h1><p>Your current role does not permit this action.</p><a class="button button-primary" href="{{ url_for('main.dashboard') }}">Return to overview</a></div>{% endblock %}

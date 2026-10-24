@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#152a4a">
+  <title>{% if page_title %}{{ page_title }} · {% endif %}AcadPulse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+{% if current_user.is_authenticated %}
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="{{ url_for('main.dashboard') }}" aria-label="AcadPulse overview">
+      <span class="brand-mark"><span></span><span></span><span></span><span></span></span>
+      <span class="brand-copy"><strong>AcadPulse</strong><small>ECE Academic Records</small></span>
+    </a>
+    <div class="sidebar-scroll">
+      <div class="nav-label">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <a class="nav-item {% if request.endpoint == 'main.dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}"><i class="bi bi-grid-1x2"></i><span>Overview</span></a>
+        <a class="nav-item {% if request.endpoint and request.endpoint.startswith('students.') %}active{% endif %}" href="{{ url_for('students.index') }}"><i class="bi bi-people"></i><span>Students</span></a>
+        <a class="nav-item {% if request.endpoint == 'main.curriculum' or (request.endpoint and request.endpoint.startswith('curricula.')) %}active{% endif %}" href="{{ url_for('main.curriculum') }}"><i class="bi bi-journal-bookmark"></i><span>Academic setup</span><span class="nav-chevron"><i class="bi bi-chevron-right"></i></span></a>
+        <a class="nav-item {% if request.endpoint in ['academics.programs', 'academics.new_program'] %}active{% endif %}" href="{{ url_for('academics.programs') }}"><i class="bi bi-mortarboard"></i><span>Programme registry</span></a>
+        <a class="nav-item {% if request.endpoint and request.endpoint.startswith('coursework.') %}active{% endif %}" href="{{ url_for('coursework.index') }}"><i class="bi bi-clipboard2-check"></i><span>Coursework & attendance</span></a>
+        <a class="nav-item {% if request.endpoint and request.endpoint.startswith('results.') %}active{% endif %}" href="{{ url_for('results.index') }}"><i class="bi bi-file-earmark-pdf"></i><span>University results</span></a>
+        <a class="nav-item {% if request.endpoint == 'main.analytics' or (request.endpoint and request.endpoint.startswith('reports.')) %}active{% endif %}" href="{{ url_for('main.analytics') }}"><i class="bi bi-bar-chart-line"></i><span>Analytics & reports</span></a>
+        <a class="nav-item {% if request.endpoint and request.endpoint.startswith('electives.') %}active{% endif %}" href="{{ url_for('electives.index') }}"><i class="bi bi-diagram-3"></i><span>Electives</span></a>
+        <a class="nav-item {% if request.endpoint and request.endpoint.startswith('calculations.') %}active{% endif %}" href="{{ url_for('calculations.index') }}"><i class="bi bi-calculator"></i><span>Calculations & promotion</span></a>
+      </nav>
+      <div class="nav-label nav-label-spaced">SYSTEM</div>
+      <nav class="side-nav" aria-label="System navigation">
+        {% if current_user.role == 'admin' %}<a class="nav-item {% if request.endpoint and request.endpoint.startswith('system.policies') %}active{% endif %}" href="{{ url_for('system.policies') }}"><i class="bi bi-sliders"></i><span>Settings & policies</span></a><a class="nav-item {% if request.endpoint == 'system.audit_log' %}active{% endif %}" href="{{ url_for('system.audit_log') }}"><i class="bi bi-shield-check"></i><span>Audit trail</span></a>{% endif %}
+      </nav>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="help-card"><span class="help-icon"><i class="bi bi-lightbulb"></i></span><div><strong>Built for reliable records</strong><p>Approvals first. History always.</p></div></div>
+      <div class="sidebar-user"><span class="avatar avatar-strong">{{ current_user.full_name[:1]|upper }}</span><span class="user-detail"><strong>{{ current_user.full_name }}</strong><small>{{ current_user.role|title }}</small></span><form method="post" action="{{ url_for('auth.logout') }}" class="logout-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="icon-button" type="submit" title="Sign out" aria-label="Sign out"><i class="bi bi-box-arrow-right"></i></button></form></div>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <main class="main-area">
+    <header class="topbar">
+      <div class="topbar-left"><button class="icon-button menu-toggle" id="menuToggle" type="button" aria-label="Open navigation"><i class="bi bi-list"></i></button><div class="breadcrumbs"><span>Workspace</span><i class="bi bi-chevron-right"></i><strong>{{ page_title or 'Overview' }}</strong></div></div>
+      <div class="topbar-right"><span class="term-pill"><span class="term-dot"></span>Academic year <strong>{{ config.CURRENT_ACADEMIC_YEAR }}</strong></span><span class="topbar-divider"></span><span class="avatar avatar-soft">{{ current_user.full_name[:1]|upper }}</span></div>
+    </header>
+    <div class="page-content">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash flash-{{ category }}"><i class="bi bi-info-circle"></i><span>{{ message }}</span></div>{% endfor %}</div>{% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+      <footer class="page-footer"><span>AcadPulse <span class="footer-dot">·</span> ECE Academic Records</span><span>Academic data should always be traceable.</span></footer>
+    </div>
+  </main>
+</div>
+{% else %}
+  {% block auth_content %}{% endblock %}
+{% endif %}
+<script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

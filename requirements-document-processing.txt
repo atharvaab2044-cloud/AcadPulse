@@ -1,0 +1,5 @@
+# Optional enhancements beyond the core syllabus/result PDF text extraction and XLSX/PDF exports.
+pdfplumber>=0.11,<1.0
+pandas>=2.2,<3.0
+pydantic>=2.8,<3.0
+email-validator>=2.1,<3.0

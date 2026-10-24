@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-heading heading-row">
+  <div><div class="eyebrow"><span class="eyebrow-line"></span>STUDENT RECORDS</div><h1>{{ 'Edit student' if editing else 'Add student' }}</h1><p>{{ 'Update contact details or current record status without changing student identity or past enrollments.' if editing else 'Create a permanent student profile now. A PRN can be added and verified later.' }}</p></div>
+  <div class="heading-actions"><a class="button button-secondary" href="{{ url_for('students.detail', student_id=student.id) if editing else url_for('students.index') }}"><i class="bi bi-arrow-left"></i> {{ 'Back to profile' if editing else 'Student directory' }}</a></div>
+</section>
+<section class="panel form-panel">
+  <div class="panel-heading"><div><h2>Student profile</h2><p>Internal identity remains stable throughout the student's academic history.</p></div>{% if editing %}<span class="panel-subtle-tag"><i class="bi bi-fingerprint"></i> {{ student.student_code }}</span>{% endif %}</div>
+  <form method="post" class="entity-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+      <div class="form-field form-field-wide"><label for="full_name">Full name <span class="required-mark">*</span></label><input id="full_name" name="full_name" type="text" maxlength="180" required value="{{ form_data.get('full_name', '') }}" autocomplete="name" placeholder="Student's full legal name"></div>
+      <div class="form-field"><label for="email">Email address</label><input id="email" name="email" type="email" maxlength="254" value="{{ form_data.get('email', '') }}" autocomplete="email" placeholder="student@example.com"></div>
+      <div class="form-field"><label for="phone">Phone number</label><input id="phone" name="phone" type="tel" maxlength="32" value="{{ form_data.get('phone', '') }}" autocomplete="tel" placeholder="Optional contact number"></div>
+      <div class="form-field"><label for="date_of_birth">Date of birth</label><input id="date_of_birth" name="date_of_birth" type="date" value="{{ form_data.get('date_of_birth', '') }}"></div>
+      {% if editing %}<div class="form-field"><label for="status">Student status</label><select id="status" name="status" required>{% for value in ['active','inactive','graduated','withdrawn','deceased'] %}<option value="{{ value }}" {% if form_data.get('status', student.status) == value %}selected{% endif %}>{{ value|replace('_',' ')|title }}</option>{% endfor %}</select></div>{% endif %}
+      <div class="form-field form-field-wide"><label for="notes">Administrative notes</label><textarea id="notes" name="notes" rows="3" maxlength="10000" placeholder="Optional notes; do not enter passwords or sensitive secrets.">{{ form_data.get('notes', '') }}</textarea></div>
+    </div>
+    {% if not editing %}<div class="form-note"><i class="bi bi-info-circle"></i><span>AcadPulse will generate a stable student code. PRN is intentionally not required during profile creation. Add and verify it later from the student's profile.</span></div>{% endif %}
+    <div class="form-actions"><a class="button button-secondary" href="{{ url_for('students.detail', student_id=student.id) if editing else url_for('students.index') }}">Cancel</a><button type="submit" class="button button-primary"><i class="bi bi-check2-circle"></i> {{ 'Save changes' if editing else 'Create student profile' }}</button></div>
+  </form>
+</section>
+{% endblock %}

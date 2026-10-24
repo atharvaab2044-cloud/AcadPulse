@@ -1,0 +1,16 @@
+flowchart TD
+    P0["Phase 0 · Reference + requirements + formula parity"] --> P1["Phase 1 · App foundation + familiar UI"]
+    P1 --> P2["Phase 2 · Academic structure + syllabus extractor"]
+    P2 --> P3["Phase 3 · Student identity + term enrollment"]
+    P3 --> P4["Phase 4 · Coursework marks + attendance"]
+    P4 --> P5["Phase 5 · Legacy formula integration + traceable calculations"]
+    P5 --> P6["Phase 6 · University result PDFs + review/linking"]
+    P6 --> P7["Phase 7 · Backlog/supplementary/promotion policy"]
+    P7 --> P8["Phase 8 · Analytics + reports + exports"]
+    P8 --> P9["Phase 9 · Security + migration + release"]
+    classDef complete fill:#e8f5ee,stroke:#2b7b55,color:#12462f,stroke-width:1.5px
+    classDef current fill:#e7efff,stroke:#356ac3,color:#1a376a,stroke-width:2px
+    classDef future fill:#f6f7fa,stroke:#8a94a6,color:#293445,stroke-width:1px
+    class P0 complete
+    class P1 current
+    class P2,P3,P4,P5,P6,P7,P8,P9 future
